@@ -1,3 +1,5 @@
+
+
 // Online Java Compiler
 // Use this editor to write, compile and run your Java code online
 
@@ -21,15 +23,41 @@ class Player{
     int location;
     boolean turn = false;
     HashMap<Integer, Integer> notSnakeBite = new HashMap<>();
-    player(String id, String name, String location, boolean turn){
+    player(String id, String name, String location, boolean turn = false){
         this.id = id;
         this.name = name;
         this.location;
-        boolean turn;
+        this.turn = turn;
     }
 }
 
 class Players{
+    private HashMap<String, player> map;
+    private Queue<player> queuePlayers;
+    private Queue<player> LeaderBoard;
+    Player(HashMap<player> map){
+        this.map = map;
+        this.queuePlayers = new LinkedList<>();
+        this.LeaderBoard = new TreeMap<>();
+    }
+    Queue<player> createPlayersQueue(Map<Integer, String> priorMap){  
+        /** PriorMap is TreeMap  that contains priority and String**/
+        for (Map.Entry<Integer, String> entry : priorMap.entrySet())
+            this.queuePlayers.add(this.map.get(entry.getValue()));
+        return this.queuePlayers;
+    }
+    HashMap<String, player> getPlayers(){
+        return this.map;
+    }
+    void removeWinPlayer(){
+        Player plr = this.queuePlayers.poll();
+    }
+    void AddPlayersInMiddleOfGame(HashMap<player> map, Map<Integer, String> priorMap){
+        /**Function -TODO**/
+    }
+    Map<Integer, player> displayLeaderBoard(){
+        
+    }
     
 }
 
@@ -67,6 +95,5 @@ class SnakesAndLadders{
 class Driver {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
-        
     }
 }
