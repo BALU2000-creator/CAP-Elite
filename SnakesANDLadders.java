@@ -1,9 +1,4 @@
 
-
-// Online Java Compiler
-// Use this editor to write, compile and run your Java code online
-
-
 class Board{
     int max, min;
     Jumps jumps;
@@ -14,13 +9,99 @@ class Board{
     }
 }
 
+class Jumper{
+    Player Currentplayer, 
+    Dice dice, 
+    Jumps jumps; 
+    boolean turn;
+    int MaxNumBoundValues;
+    HashMap<Integer, ArrayList<Player>> SnakeNotToBite;
+    Jumper(Dice dice, int MaxNumBoundValues=2){
+        this.dice = dice;
+        this.SnakeNotToBite = new HashMap<>();
+        this.jumps = jumps;
+        this.MaxNumBoundValues = MaxNumBoundValues; // 3 sixes --> out
+    }
+    void NextMove(Scanner sc){
+        boolean turn = this.turn;
+        int curr Location = this.Currentplayer.getLocation();
+        int locationToChange = 0
+        int numOfMaximums = 0;
+        while(turn){
+            EnterInput();
+            int numRolled = getDiceNumber();
+            int locationToChange = CheckMaximumBound(numRolled, locationToChange);
+        }
+    }
+    
+    boolean CheckMaximumBound(int numRolled, int locationToChange){
+        int numOfMaximums = 0;
+        if(numRolled==this.dice.getMaxDice){
+            numOfMaximums++;
+            locationToChange = locationToChange + numRolled;
+        }
+        else{
+            return 0;
+        }
+        if(numOfMaximums==this.MaxNumBoundValues)
+            return 0;        
+    }
+    
+    int getDiceNumber(){
+        return this.dice.rollDice();
+    }
+    Player getCurrentPlayer(){
+        return this.Currentplayer;
+    }
+    void UserEnterInput(){
+        String st = "Press Enter";
+        do{
+            System.out.println("Press Enter Button to roll dice");
+            st= sc.nextLine();
+        }while(!st.equals(""));
+    }
+    void setMaxNumBoundValues(int MaxNumBoundValues){
+        this.MaxNumBoundValues = MaxNumBoundValues;
+    }
+    void setCurrentPlayer(){
+        this.CurrentPlayer = Player;
+        setCurrentTurn(this.CurrentPlayer.getTurn());
+    }
+    void setCurrentTurn(boolean turn){
+        this.turn = turn;
+    }
+}
+
 class Dice{
+    private int maxDice=6, minDice=1, numOfDices=1;
+    Dice(int maxDice=6, int min=1, int numOfDices=1){
+        setMinDice(minDice);
+        setMaxDice(maxDice);
+        setNumOfDices(numOfDices);
+    }
+    void ModifyMinMax(int minDice, int maxDice, int numOfDices)){
+        setMinDice(minDice+numOfDices);
+        setMaxDice(maxDice*numOfDices);
+    }
+    int rollDice(){
+        return (int)((Math.random() * (this.maxDice - this.minDice)) + this.minDice);
+    }
+    //Getters & Setters
+    int getMaxDice() return this.maxDice;
+    int getMinDice() return this.minDice;
+    int getNumOfDices() return this.numOfDices;
+    void setMaxDice(int MaxDice) this.maxDice=MaxDice;
+    void setMinDice(int MinDice) this.minDice=MinDice;
+    void setNumOfDices(int numOfDices){
+        this.numOfDices = numOfDices;
+        ModifyMinMax(getMinDice(), getMaxDice(), getNumOfDices());
+    }
     
 }
 
 class Player{
     String id, name;
-    int location;
+    int location=0;
     boolean turn = false;
     HashMap<Integer, Integer> notSnakeBite = new HashMap<>();
     player(String id, String name, String location, boolean turn = false){
@@ -29,8 +110,9 @@ class Player{
         this.location;
         this.turn = turn;
     }
+    boolean getTurn() return this.turn;
+    int getLocation() return this.location;
 }
-
 class Players{
     private HashMap<String, player> map;
     private Queue<player> queuePlayers;
@@ -54,9 +136,10 @@ class Players{
     }
     void AddPlayersInMiddleOfGame(HashMap<player> map, Map<Integer, String> priorMap){
         /**Function -TODO**/
+        return;
     }
     Map<Integer, player> displayLeaderBoard(){
-        
+        return;
     }
     
 }
