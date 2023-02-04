@@ -32,6 +32,7 @@ class Jumper{
     }
 
     int RollOnIfSix(int numRolled,int currLocation){
+        System.out.println("printfoisf"+this.MaxNumBoundValues+"wehfryt"+this.dice.getMaxDice());
         int locationToChange = 0, numOfMaximums = 0;
         while((numRolled==this.dice.getMaxDice()) && numOfMaximums<this.MaxNumBoundValues){
             numOfMaximums++;
