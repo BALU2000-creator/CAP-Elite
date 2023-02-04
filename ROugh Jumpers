@@ -1,0 +1,47 @@
+import java.util.*;
+
+class HelloWorld {
+    public static void main(String[] args) {
+        NextMove();
+    }
+    static void NextMove(){
+        boolean turn = true;
+        int currLocation = 52;
+        int locationToChange = 0;
+        int numOfMaximums = 0;
+        UserEnterInput();
+        int numRolled = getDiceNumber();
+        System.out.println("Rolled Number : "+numRolled+"\n");
+        locationToChange = CheckMaximumBound(numRolled, locationToChange);
+        System.out.println("Final Location to change : "+locationToChange);
+
+    }
+    
+    static int CheckMaximumBound(int numRolled, int locationToChange){
+        int numOfMaximums = 0, returnVal = 0;
+        while((numRolled==6) && numOfMaximums<2){
+            numOfMaximums++;
+            locationToChange = locationToChange + numRolled;
+            UserEnterInput();
+            numRolled = getDiceNumber();
+            System.out.println("Rolled Number : "+numRolled);
+        }
+        if(numOfMaximums<2) returnVal =  locationToChange+numRolled;
+        else returnVal =  0;
+        return returnVal;
+    }
+    
+    static int getDiceNumber(){
+        return (int)((Math.random() * (7 - 1)) + 1);
+    }
+    
+    static void UserEnterInput(){
+        Scanner sc = new Scanner(System.in);
+        String st = "Press Enter";
+        do{
+            System.out.print("Press Enter Button to roll dice");
+            st= sc.nextLine();
+        }while(!st.equals(""));
+    }
+   
+}
