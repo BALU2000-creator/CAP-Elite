@@ -5,21 +5,21 @@ class Jumper{
     Dice dice;
     Jumps jumps; 
     int MaxNumBoundValues;
+    int boardMaxValue;
     HashMap<Integer, ArrayList<Player>> SnakeNotToBite;
-    Jumper(Dice dice, int MaxNumBoundValues, Jumps jumps){
+    Jumper(Dice dice, int MaxNumBoundValues, Jumps jumps, int boardMaxValue){
         this.dice = dice;
         this.SnakeNotToBite = new HashMap<>();
         this.jumps = jumps;
         this.MaxNumBoundValues = MaxNumBoundValues; // 3 sixes --> out
+        this.boardMaxValue = boardMaxValue;
     }
 
     void NextMove(){
         int currLocation = this.Currentplayer.getLocation();
         int numRolled = getDiceNumber();
         int getcurrLocation = RollOnIfSix(numRolled, currLocation);
-        System.out.println("Now print getcurrLocation, "+getcurrLocation);
         currLocation = AnySankeAndLadder(getcurrLocation);
-        System.out.println("Now print currLocation, "+getcurrLocation);
         this.Currentplayer.setLocation(currLocation);
         if(getmap().containsKey(getcurrLocation)){
             if(getcurrLocation-currLocation > 0){
@@ -40,8 +40,8 @@ class Jumper{
             numRolled = getDiceNumber();
         }
         if(numOfMaximums<this.MaxNumBoundValues) locationToChange =  locationToChange+numRolled;
-        else                                     locationToChange =  numRolled;
-        if(locationToChange+currLocation>this.dice.getMaxDice()){
+        else locationToChange =  numRolled;
+        if(locationToChange+currLocation>this.boardMaxValue){
             return currLocation;
         }
         return currLocation+locationToChange;
@@ -94,7 +94,7 @@ class Game{
     Jumper jumper;
     Game(SnakesAndLadders game){
         this.game = game;
-        this.jumper = new Jumper(this.game.getDice(), 2, this.game.getBoard().getJumps());
+        this.jumper = new Jumper(this.game.getDice(), 2, this.game.getBoard().getJumps(), this.game.getBoard().getMaxBoardSize());
         System.out.println("Jumps "+this.jumper.getmap());
         System.out.println("Players "+this.game.getPlayers().getQueuePlayers());
     }
@@ -232,6 +232,12 @@ class Board{
     }
     Jumps getJumps(){
         return this.jumps;
+    }
+    int getMaxBoardSize(){
+        return this.max;
+    }
+    int getMinBoardSize(){
+        return this.min;
     }
 }
 class Player{
