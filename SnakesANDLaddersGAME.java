@@ -11,7 +11,7 @@ class Jumper{
         this.dice = dice;
         this.SnakeNotToBite = new HashMap<>();
         this.jumps = jumps;
-        this.MaxNumBoundValues = MaxNumBoundValues; // 3 sixes --> out
+        this.MaxNumBoundValues = MaxNumBoundValues; 
         this.boardMaxValue = boardMaxValue;
     }
 
@@ -32,7 +32,6 @@ class Jumper{
     }
 
     int RollOnIfSix(int numRolled,int currLocation){
-        System.out.println("printfoisf"+this.MaxNumBoundValues+"wehfryt"+this.dice.getMaxDice());
         int locationToChange = 0, numOfMaximums = 0;
         while((numRolled==this.dice.getMaxDice()) && numOfMaximums<this.MaxNumBoundValues){
             numOfMaximums++;
@@ -46,7 +45,6 @@ class Jumper{
         }
         return currLocation+locationToChange;
     }
-
     int AnySankeAndLadder(int currLocation){
         int locationToChange = 0;
         if(getmap().containsKey(currLocation)){
@@ -55,18 +53,15 @@ class Jumper{
         }
         return currLocation;
     }
-
     int getDiceNumber(){
         UserEnterInput();
         int rolledNum = this.dice.rollDice();
-        System.out.println("Rolled Number : "+rolledNum+"\n");
+        System.out.println(this.Currentplayer.name+" rolls the Number : "+rolledNum);
         return rolledNum;
     }
-
     Player getCurrentPlayer(){
         return this.Currentplayer;
     }
-
     HashMap<Integer, Integer> getmap(){
         return this.jumps.getMap();
     }
@@ -75,11 +70,7 @@ class Jumper{
     }
     void setCurrentPlayer(Player player){
         this.Currentplayer = player;
-        // setCurrentTurn(this.Currentplayer.getTurn());
     }
-    // void setCurrentTurn(boolean turn){
-    //     this.turn = turn;
-    // }
     void UserEnterInput(){
         Scanner sc = new Scanner(System.in);
         String st = "Press Enter";
@@ -92,29 +83,31 @@ class Jumper{
 class Game{
     SnakesAndLadders game;
     Jumper jumper;
+    int ContinueUntillNumOfPlayers = 0;
     Game(SnakesAndLadders game){
         this.game = game;
         this.jumper = new Jumper(this.game.getDice(), 2, this.game.getBoard().getJumps(), this.game.getBoard().getMaxBoardSize());
-        System.out.println("Jumps "+this.jumper.getmap());
-        System.out.println("Players "+this.game.getPlayers().getQueuePlayers());
+    }
+    Game(SnakesAndLadders game, int ContinueUntillNumOfPlayers){
+        this.game = game;
+        this.jumper = new Jumper(this.game.getDice(), 2, this.game.getBoard().getJumps(), this.game.getBoard().getMaxBoardSize());
+        this.ContinueUntillNumOfPlayers = ContinueUntillNumOfPlayers;
     }
     void startGame(){
         Queue<Player> queue = this.game.getPlayers().getQueuePlayers();
-        while(!queue.isEmpty()){
+        while(!(queue.size()==this.ContinueUntillNumOfPlayers)){
             Player player = queue.poll();
-            System.out.println("player "+player.getName()+" location is "+player.getLocation());
+            System.out.println("\n\nPlayer "+player.getName()+" turn-->"+" Current location is "+player.getLocation());
             this.jumper.setCurrentPlayer(player);
             this.jumper.NextMove();
             System.out.println("player "+player.getName()+" location changed is "+player.getLocation());
-            if(player.getLocation()<100){
-                queue.add(player);
-            }
+            if(player.getLocation()<100) queue.add(player);
+            else this.game.getPlayers().AddPlayersIntoLeaderBoard(player);
         }
+        this.game.getPlayers().displayLeaderBoard();
     }
-    
 }
 class SnakesAndLadders{
-    /**A SnakeAndLadders contains Board, players, dice */
     Board board;
     Players players;
     Dice dice;
@@ -163,16 +156,31 @@ class Jumps{
         return this.map;
     }
     HashMap<Integer, Integer> getMap(){
-        return map;
+        return this.map;
     }
     void setmap(HashMap<Integer, Integer> map){
-        cleanMapFromInfLoops(map);
-        this.map = map;
+        this.map = cleanMapFromInfLoops(getMap());
         
     }
-    void cleanMapFromInfLoops(HashMap<Integer, Integer> map){
-        //To-D0
-        return;
+    HashMap<Integer, Integer> cleanMapFromInfLoops(HashMap<Integer, Integer> map){
+        HashSet<Integer> tobeRemoved = new HashSet<>();
+        int i=0;
+        for (Map.Entry<Integer,Integer> entry : map.entrySet()) {
+            int value = map.get(entry.getKey());
+            while(map.containsKey(value)){
+                i++;
+                int val = map.get(value);
+                map.put(entry.getKey(), val);
+                tobeRemoved.add(value);
+                value= val;
+                if(i>map.size()) break;
+            }
+            i=0;
+        }
+        for(Integer val:tobeRemoved){
+            map.remove(val);
+        }
+        return map;
     }
 }
 class Dice{
@@ -243,15 +251,10 @@ class Board{
 class Player{
     String id, name;
     int location=0;
-    boolean turn = false;
     Player(String id, String name, int location) {
         this.id = id;
         this.name = name;
         this.location = location;
-        this.turn = false;
-    }
-    boolean getTurn(){
-        return this.turn;
     }
     int getLocation(){
         return this.location;
@@ -280,14 +283,20 @@ class Players{
         Player player = this.queuePlayers.poll();
         this.LeaderBoard.add(player);
     }
+    void AddPlayersIntoLeaderBoard(Player player){
+        this.LeaderBoard.add(player);
+    }
     void AddPlayersInMiddleOfGame(Queue<Player> players){
         /**Function upadte map, queuePlayers -TODO**/
         return;
     }
     void displayLeaderBoard(){
         int i =0;
+        if(this.LeaderBoard.isEmpty()){
+            System.out.println("Currently there are no players in LeaderBoard");
+        }
         for(Player player : this.LeaderBoard){
-            System.out.println("Player Name = "+player.name+" in win position = "+player.id);
+            System.out.println("Player Name = "+player.name+" in win position = "+i);
             i++;
         }
     }
@@ -297,9 +306,24 @@ class Players{
         }
     }
 }
-class Driver {
+class SnakesANDLaddersGAME {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        Driver driver = new Driver();
+        driver.driverTheGame();
+    }
+}
+class Driver{
+    String getAlphaNumericString(int n){
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+        StringBuilder sb = new StringBuilder(n);
+        for (int i = 0; i < n; i++) {
+            int index = (int)(AlphaNumericString.length() * Math.random());
+            sb.append(AlphaNumericString.charAt(index));
+        }
+        return sb.toString();
+    }
+    void driverTheGame(){
+                Scanner sc = new Scanner(System.in);
         System.out.println("Welcome to the SnakeAndLadders Game\nDo you want to play? -> Yes or No");
         String st = sc.nextLine();
         while(!st.equals("Yes")){
@@ -342,17 +366,5 @@ class Driver {
         SnakesAndLadders snakesAndLadders = new SnakesAndLadders(board, AllPlayers, dice);
         Game game = new Game(snakesAndLadders);
         game.startGame();
-        
     }
-    static String getAlphaNumericString(int n){
-        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
-        StringBuilder sb = new StringBuilder(n);
-        for (int i = 0; i < n; i++) {
-            int index = (int)(AlphaNumericString.length() * Math.random());
-            sb.append(AlphaNumericString.charAt(index));
-        }
-        return sb.toString();
-    }
-
-
 }
